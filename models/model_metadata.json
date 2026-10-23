@@ -1,0 +1,13 @@
+{
+    "model": "Decision Tree Classifier",
+    "features": [
+        "17",
+        "29",
+        "30"
+    ],
+    "target": "GRADE",
+    "training_records": 116,
+    "test_records_reserved": 29,
+    "random_state": 42,
+    "test_size": 0.2
+}

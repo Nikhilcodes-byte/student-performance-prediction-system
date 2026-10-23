@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Prediction</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 16px;
+            font-family: Arial, sans-serif;
+            background: #f3f5f9;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #1d4ed8;
+            text-align: center;
+        }
+
+        .description {
+            text-align: center;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 26px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #result {
+            display: none;
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 10px;
+            background: #eff6ff;
+            text-align: center;
+        }
+
+        #result h2 {
+            margin-top: 0;
+        }
+
+        #error {
+            margin-top: 18px;
+            color: #b91c1c;
+            text-align: center;
+        }
+
+        .notice {
+            margin-top: 24px;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .history-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 18px;
+            background: #315bd6;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .history-link:hover {
+            background: #2448b3;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1>Student Performance Prediction</h1>
+
+        <p class="description">
+            Enter the student's academic information
+            to generate an experimental grade prediction.
+        </p>
+
+        <form id="predictionForm">
+            <label for="studyHours">Weekly Study Hours</label>
+            <select id="studyHours" required>
+                <option value="">Select a category</option>
+                <option value="1">1 - None</option>
+                <option value="2">2 - Less than 5 hours</option>
+                <option value="3">3 - 6–10 hours</option>
+                <option value="4">4 - 11–20 hours</option>
+                <option value="5">5 - More than 20 hours</option>
+            </select>
+
+            <label for="previousGpa">Previous Cumulative GPA</label>
+            <select id="previousGpa" required>
+                <option value="">Select a category</option>
+                <option value="1">1 - Below 2.00</option>
+                <option value="2">2 - 2.00–2.49</option>
+                <option value="3">3 - 2.50–2.99</option>
+                <option value="4">4 - 3.00–3.49</option>
+                <option value="5">5 - Above 3.49</option>
+            </select>
+
+            <label for="expectedGpa">Expected Graduation GPA</label>
+            <select id="expectedGpa" required>
+                <option value="">Select a category</option>
+                <option value="1">1 - Below 2.00</option>
+                <option value="2">2 - 2.00–2.49</option>
+                <option value="3">3 - 2.50–2.99</option>
+                <option value="4">4 - 3.00–3.49</option>
+            </select>
+
+            <button type="submit">Predict Performance</button>
+        </form>
+        
+        <a href="/history" class="history-link">
+            View Prediction History
+        </a>
+        
+        <a href="/dashboard" class="history-link">
+            View Dashboard
+        </a>
+        
+        <div id="result" aria-live="polite">
+            <h2>Prediction Result</h2>
+            <p id="grade"></p>
+        </div>
+
+        <p id="error" role="alert"></p>
+
+        <p class="notice">
+            This is an experimental machine learning prediction,
+            not a guaranteed academic outcome. The current model
+            has limited test accuracy and should not be used to
+            make important academic decisions.
+        </p>
+    </main>
+
+    <script>
+        const form = document.getElementById("predictionForm");
+        const result = document.getElementById("result");
+        const grade = document.getElementById("grade");
+        const error = document.getElementById("error");
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            result.style.display = "none";
+            error.textContent = "";
+
+            const data = {
+                "17": Number(document.getElementById("studyHours").value),
+                "29": Number(document.getElementById("previousGpa").value),
+                "30": Number(document.getElementById("expectedGpa").value)
+            };
+
+            try {
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const output = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(output.error || "Prediction failed.");
+                }
+
+                grade.textContent =
+                    "Predicted grade: " + output.predicted_grade +
+                    " (" + output.grade_label + ")";
+
+                result.style.display = "block";
+            } catch (err) {
+                error.textContent = err.message;
+            }
+        });
+    </script>
+</body>
+</html>

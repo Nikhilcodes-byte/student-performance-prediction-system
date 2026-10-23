@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction History</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #243047;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5eaf1;
+        }
+
+        th {
+            background: #edf3ff;
+            color: #294b8b;
+        }
+
+        tbody tr:hover {
+            background: #f8faff;
+        }
+
+        .grade {
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 12px 18px;
+            background: #315bd6;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .back-link:hover {
+            background: #2448b3;
+        }
+
+        .notice {
+            margin-top: 20px;
+            color: #64748b;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Prediction History</h1>
+        <p class="subtitle">
+            View previous student performance predictions
+        </p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Weekly Study Hours</th>
+                        <th>Previous GPA Category</th>
+                        <th>Expected GPA Category</th>
+                        <th>Predicted Grade</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.timestamp }}</td>
+                        <td>{{ record.weekly_study_hours }}</td>
+                        <td>{{ record.previous_gpa }}</td>
+                        <td>{{ record.expected_gpa }}</td>
+                        <td class="grade">
+                            {{ record.predicted_grade }} -
+                            {{ record.grade_label }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="empty">
+                            No prediction history available yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="/" class="back-link">Back to Prediction</a>
+
+        <p class="notice">
+            Predictions are experimental and are not guaranteed academic outcomes.
+        </p>
+    </div>
+</body>
+</html>
